@@ -10,6 +10,8 @@ OAUTH_SECRET=""
 MAXPERHOUR=4
 OVERALLMAXPERHOUR=50
 
+lasttry=0
+
 class MyStreamer(TwythonStreamer):
     friends = []
     rts = []
@@ -62,12 +64,20 @@ class MyStreamer(TwythonStreamer):
         # Uncomment the next line!
         # self.disconnect()
 
-twitter = twython.Twython(app_key=APP_KEY, app_secret=APP_SECRET, oauth_token=OAUTH_TOKEN, oauth_token_secret=OAUTH_SECRET)
-creds = twitter.verify_credentials()
-userid = creds['id_str']
+while True:
+    try:
+        twitter = twython.Twython(app_key=APP_KEY, app_secret=APP_SECRET, oauth_token=OAUTH_TOKEN, oauth_token_secret=OAUTH_SECRET)
+        creds = twitter.verify_credentials()
+        userid = creds['id_str']
 
-stream = MyStreamer(APP_KEY, APP_SECRET,OAUTH_TOKEN, OAUTH_SECRET)
-stream.twitter = twitter
-stream.creds = creds
+        stream = MyStreamer(APP_KEY, APP_SECRET,OAUTH_TOKEN, OAUTH_SECRET)
+        stream.twitter = twitter
+        stream.creds = creds
 
-stream.user()
+        stream.user()
+    except:
+        if int(time.time()) - lasttry < 1000:
+            break
+        else:
+            lasttry = int(time.time())
+
