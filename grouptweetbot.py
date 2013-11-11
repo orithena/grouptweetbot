@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import twython, time, pprint
+import twython, time, pprint, traceback
 from twython import TwythonStreamer
 
 APP_KEY=""
@@ -75,9 +75,14 @@ while True:
         stream.creds = creds
 
         stream.user()
-    except:
-        if int(time.time()) - lasttry < 1000:
+    except Exception, e:
+        print('==Exception==')
+        print(e)
+        print(traceback.format_exc())
+        if int(time.time()) - lasttry < 120:
+            print('==Too many Exceptions in the last 2 minutes, exiting...')
             break
         else:
+            time.sleep(5)
             lasttry = int(time.time())
 
